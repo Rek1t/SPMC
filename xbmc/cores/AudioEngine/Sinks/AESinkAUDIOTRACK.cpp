@@ -32,6 +32,10 @@
 #include "utils/StringUtils.h"
 #include "utils/TimeUtils.h"
 
+#include <algorithm>
+#include <iostream>
+#include <sstream>
+
 #include "utils/AMLUtils.h"
 
 //#define DEBUG_VERBOSE 1
@@ -72,6 +76,41 @@ static bool Has71Support()
 bool CAESinkAUDIOTRACK::HasAmlHD()
 {
   return ((CJNIAudioFormat::ENCODING_DTSHD != -1) && (CJNIAudioFormat::ENCODING_TRUEHD != -1));
+}
+
+static void LogAudoDevices(const char* stage, const CJNIAudioDeviceInfos& devices)
+{
+  CLog::Log(LOGDEBUG, "--- Audio device list: %s", stage);
+  for (auto dev : devices)
+  {
+    CLog::Log(LOGDEBUG, "--- Found device: %s", dev.getProductName().toString().c_str());
+    CLog::Log(LOGDEBUG, "    id: %d, type: %d, isSink: %s, isSource: %s", dev.getId(), dev.getType(), dev.isSink() ? "true" : "false", dev.isSource() ? "true" : "false");
+
+    std::ostringstream oss;
+    for (auto i : dev.getChannelCounts())
+      oss << i << " / ";
+    CLog::Log(LOGDEBUG, "    channel counts: %s", oss.str().c_str());
+
+    oss.clear(); oss.str("");
+    for (auto i : dev.getChannelIndexMasks())
+      oss << i << " / ";
+    CLog::Log(LOGDEBUG, "    channel index masks: %s", oss.str().c_str());
+
+    oss.clear(); oss.str("");
+    for (auto i : dev.getChannelMasks())
+      oss << i << " / ";
+    CLog::Log(LOGDEBUG, "    channel masks: %s", oss.str().c_str());
+
+    oss.clear(); oss.str("");
+    for (auto i : dev.getEncodings())
+      oss << i << " / ";
+    CLog::Log(LOGDEBUG, "    encodings: %s", oss.str().c_str());
+
+    oss.clear(); oss.str("");
+    for (auto i : dev.getSampleRates())
+      oss << i << " / ";
+    CLog::Log(LOGDEBUG, "    sample rates: %s", oss.str().c_str());
+  }
 }
 
 int CAESinkAUDIOTRACK::AEStreamFormatToATFormat(const CAEStreamInfo::DataType& dt)
@@ -787,6 +826,14 @@ void CAESinkAUDIOTRACK::Drain()
 
 void CAESinkAUDIOTRACK::EnumerateDevicesEx(AEDeviceInfoList &list, bool force)
 {
+  // Enumerate audio devices on API >= 23
+  if (CJNIAudioManager::GetSDKVersion() >= 23)
+  {
+    CJNIAudioManager audioManager(CJNIContext::getSystemService("audio"));
+    CJNIAudioDeviceInfos audiodevices = audioManager.getDevices(CJNIAudioManager::GET_DEVICES_OUTPUTS);
+    LogAudoDevices("EnumerateDevicesEx", audiodevices);
+  }
+
   m_sink_sampleRates.clear();
   m_sink_sampleRates.insert(CJNIAudioTrack::getNativeOutputSampleRate(CJNIAudioManager::STREAM_MUSIC));
 
