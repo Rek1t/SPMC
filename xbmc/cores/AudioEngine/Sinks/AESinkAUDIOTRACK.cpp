@@ -87,29 +87,73 @@ static void LogAudoDevices(const char* stage, const CJNIAudioDeviceInfos& device
     CLog::Log(LOGDEBUG, "    id: %d, type: %d, isSink: %s, isSource: %s", dev.getId(), dev.getType(), dev.isSink() ? "true" : "false", dev.isSource() ? "true" : "false");
 
     std::ostringstream oss;
-    for (auto i : dev.getChannelCounts())
-      oss << i << " / ";
-    CLog::Log(LOGDEBUG, "    channel counts: %s", oss.str().c_str());
+    if (!dev.getChannelCounts().empty())
+    {
+      for (auto i : dev.getChannelCounts())
+        oss << i << " / ";
+      CLog::Log(LOGDEBUG, "    channel counts: %s", oss.str().c_str());
+    }
+    else
+      CLog::Log(LOGDEBUG, "    channel counts: any");
 
-    oss.clear(); oss.str("");
-    for (auto i : dev.getChannelIndexMasks())
-      oss << i << " / ";
-    CLog::Log(LOGDEBUG, "    channel index masks: %s", oss.str().c_str());
+    if (!dev.getChannelIndexMasks().empty())
+    {
+      oss.clear(); oss.str("");
+      for (auto i : dev.getChannelIndexMasks())
+        oss << i << " / ";
+      CLog::Log(LOGDEBUG, "    channel index masks: %s", oss.str().c_str());
+    }
+    else
+      CLog::Log(LOGDEBUG, "    channel index masks: any");
 
-    oss.clear(); oss.str("");
-    for (auto i : dev.getChannelMasks())
-      oss << i << " / ";
-    CLog::Log(LOGDEBUG, "    channel masks: %s", oss.str().c_str());
+    if (!dev.getChannelMasks().empty())
+    {
+      oss.clear(); oss.str("");
+      for (auto i : dev.getChannelMasks())
+        oss << i << " / ";
+      CLog::Log(LOGDEBUG, "    channel masks: %s", oss.str().c_str());
+    }
+    else
+      CLog::Log(LOGDEBUG, "    channel masks: any");
 
-    oss.clear(); oss.str("");
-    for (auto i : dev.getEncodings())
-      oss << i << " / ";
-    CLog::Log(LOGDEBUG, "    encodings: %s", oss.str().c_str());
+    if (!dev.getEncodings().empty())
+    {
+      oss.clear(); oss.str("");
+      for (auto i : dev.getEncodings())
+      {
+        if (i == CJNIAudioFormat::ENCODING_PCM_16BIT)
+          oss << "PCM_16BIT" << " / ";
+        else if (i == CJNIAudioFormat::ENCODING_PCM_FLOAT)
+          oss << "PCM_FLOAT" << " / ";
+        else if (i == CJNIAudioFormat::ENCODING_AC3)
+          oss << "AC3" << " / ";
+        else if (i == CJNIAudioFormat::ENCODING_E_AC3)
+          oss << "E_AC3" << " / ";
+        else if (i == CJNIAudioFormat::ENCODING_DTS)
+          oss << "DTS" << " / ";
+        else if (i == CJNIAudioFormat::ENCODING_DTS_HD)
+          oss << "DTS_HD" << " / ";
+        else if (i == CJNIAudioFormat::ENCODING_DOLBY_TRUEHD)
+          oss << "DOLBY_TRUEHD" << " / ";
+        else if (i == CJNIAudioFormat::ENCODING_IEC61937)
+          oss << "IEC61937" << " / ";
+        else
+          oss << i << " / ";
+      }
+      CLog::Log(LOGDEBUG, "    encodings: %s", oss.str().c_str());
+    }
+    else
+      CLog::Log(LOGDEBUG, "    encodings: any");
 
-    oss.clear(); oss.str("");
-    for (auto i : dev.getSampleRates())
-      oss << i << " / ";
-    CLog::Log(LOGDEBUG, "    sample rates: %s", oss.str().c_str());
+    if (!dev.getSampleRates().empty())
+    {
+      oss.clear(); oss.str("");
+      for (auto i : dev.getSampleRates())
+        oss << i << " / ";
+      CLog::Log(LOGDEBUG, "    sample rates: %s", oss.str().c_str());
+    }
+    else
+      CLog::Log(LOGDEBUG, "    sample rates: any");
   }
 }
 
