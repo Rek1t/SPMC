@@ -84,7 +84,56 @@ static void LogAudoDevices(const char* stage, const CJNIAudioDeviceInfos& device
   for (auto dev : devices)
   {
     CLog::Log(LOGDEBUG, "--- Found device: %s", dev.getProductName().toString().c_str());
-    CLog::Log(LOGDEBUG, "    id: %d, type: %d, isSink: %s, isSource: %s", dev.getId(), dev.getType(), dev.isSink() ? "true" : "false", dev.isSource() ? "true" : "false");
+    std::string sType;
+    int iType = dev.getType();
+    if (iType == CJNIAudioDeviceInfo::TYPE_AUX_LINE)
+      sType = "AUX_LINE";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_BLUETOOTH_A2DP)
+      sType = "BLUETOOTH_A2DP";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_BLUETOOTH_SCO)
+      sType = "BLUETOOTH_SCO";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_BUILTIN_EARPIECE)
+      sType = "BUILTIN_EARPIECE";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_BUILTIN_MIC)
+      sType = "BUILTIN_MIC";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_BUILTIN_SPEAKER)
+      sType = "BUILTIN_SPEAKER";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_BUS)
+      sType = "BUS";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_DOCK)
+      sType = "DOCK";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_FM)
+      sType = "FM";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_FM_TUNER)
+      sType = "FM_TUNER";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_HDMI)
+      sType = "HDMI";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_HDMI_ARC)
+      sType = "HDMI_ARC";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_IP)
+      sType = "IP";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_LINE_ANALOG)
+      sType = "LINE_ANALOG";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_LINE_DIGITAL)
+      sType = "LINE_DIGITAL";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_TELEPHONY)
+      sType = "TELEPHONY";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_TV_TUNER)
+      sType = "TV_TUNER";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_UNKNOWN)
+      sType = "UNKNOWN";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_USB_ACCESSORY)
+      sType = "USB_ACCESSORY";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_USB_DEVICE)
+      sType = "USB_DEVICE";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_WIRED_HEADPHONES)
+      sType = "WIRED_HEADPHONES";
+    else if (iType == CJNIAudioDeviceInfo::TYPE_WIRED_HEADSET)
+      sType = "WIRED_HEADSET";
+    else
+      sType = iType;
+
+    CLog::Log(LOGDEBUG, "    id: %d, type: %s, isSink: %s, isSource: %s", dev.getId(), sType.c_str(), dev.isSink() ? "true" : "false", dev.isSource() ? "true" : "false");
 
     std::ostringstream oss;
     if (!dev.getChannelCounts().empty())
